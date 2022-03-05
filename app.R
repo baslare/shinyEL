@@ -8,7 +8,7 @@ source("hexFunctions.R")
 source("global.R")
 
 
-
+listSeasons<- as.list(unique(data$season))
 listNames <- as.list(unique(data$name))
 listTeams <- as.list(unique(data$team))
 sciCols <- c("red", "pink", "purple", "deep-purple",
@@ -17,11 +17,12 @@ sciCols <- c("red", "pink", "purple", "deep-purple",
              "blue-grey")
 
 
-ui <- fluidPage(theme = shinytheme("cyborg"),div(style="text-align:center", h1("Euroleague Shot Charts")),
+ui <- fluidPage(div(style="text-align:center", h1("Euroleague Shot Charts")),
                 useShinyjs(),
                 sidebarLayout(sidebarPanel(radioButtons(inputId= "hex", choices = c("hexmap","heatmap"),label="Plot Type"),
                 div(id="sidebar2",radioButtons(inputId = "player",choices = c("team","player"),label = "Teams/Players"),
                 uiOutput(outputId = "out"),
+                shinyjs::hidden(selectInput(inputId = "selectionSeason",choices = listSeasons,label = "Season")),
                 shinyjs::hidden(selectInput(inputId = "selection",choices = listNames,label = "Players")),
                 shinyjs::hidden(selectInput(inputId = "selectTeams",choices = listTeams,label = "Teams")),
                 shinyjs::hidden(selectizeInput(inputId = "selectOpp",choices = list(self=FALSE,opponent=TRUE),label = "Self/Opponent FGs")),
@@ -43,6 +44,7 @@ server <- function(input, output){
   observeEvent(eventExpr = input$hex,handlerExpr= {
     if(input$hex == "hexmap"){
       #shinyjs::hide(id="sidebar2")
+      
       shinyjs::show(id="colorsHex")
       shinyjs::hide(id="colors")
       shinyjs::show(id="hexSize")
@@ -62,14 +64,18 @@ server <- function(input, output){
   
   observeEvent(eventExpr = input$player,handlerExpr = {
     if(input$player == "team"){
+      
       shinyjs::show(id = "selectTeams")
       shinyjs::hide(id = "selection")
       shinyjs::show(id = "selectOpp")
     }else{
+      
       shinyjs::show(id="selection")
       shinyjs::hide(id="selectTeams")
       shinyjs::hide(id = "selectOpp")
     }
+    
+    shinyjs::show(id="selectionSeason")
   })
   
   
@@ -112,6 +118,7 @@ server <- function(input, output){
       inpName <- isolate(input$selectTeams)
     }
     
+  season <- isolate(input$selectionSeason)
   scicol <- isolate(input$colorsHex)
   hexSize <- isolate(input$hexSize)*100
   hexMult <- isolate(input$hexMult)
@@ -119,9 +126,9 @@ server <- function(input, output){
 
   input$button1
   if(isolate(input$hex) == "heatmap"){
-    isolate(heatFunction(data,player = plCheck,opp = oppCheck,input = inpName,input_title = inpName,col_palette = listColors[[input$colors]]))  
+    isolate(heatFunction(data,player = plCheck,opp = oppCheck,season = season,input = inpName,input_title = inpName,col_palette = listColors[[input$colors]]))  
   }else{
-    isolate(hexFunction(data,binwidth = hexSize ,radiusFactor = hexMult,player = plCheck,opp = oppCheck,input = inpName,col_palette = scicol)) 
+    isolate(hexFunction(data,binwidth = hexSize ,radiusFactor = hexMult,season = season,player = plCheck,opp = oppCheck,input = inpName,col_palette = scicol)) 
   }
    
     

@@ -1,10 +1,10 @@
-hexFunction <- function(df,binwidth,radiusFactor,player=TRUE, opp=FALSE, input, col_palette="amber"){
+hexFunction <- function(df,binwidth,season="2021",radiusFactor,player=TRUE, opp=FALSE, input, col_palette="amber"){
   if(player){
-    dataSub <- data %>% filter(str_detect(name,input))
+    dataSub <- data %>% filter(season == season)%>% filter(str_detect(name,input))
   }else if(!opp){
-    dataSub <- data %>% filter(str_detect(team,input))
+    dataSub <- data %>% filter(season == season)%>% filter(str_detect(team,input))
   }else{
-    dataSub <- data %>% filter(str_detect(opp,input))
+    dataSub <- data %>% filter(season == season)%>% filter(str_detect(opp,input))
   }
   
   xbnds = hex_bounds(dataSub$xnew, binwidth)
@@ -101,13 +101,13 @@ hexFunction <- function(df,binwidth,radiusFactor,player=TRUE, opp=FALSE, input, 
   
 }
 
-heatFunction <- function(df, player=TRUE, input, opp=FALSE, col_palette=c("black","#522149","purple","pink","white"), input_title=input){
+heatFunction <- function(df, player=TRUE, season="2020", input, opp=FALSE, col_palette=c("black","#522149","purple","pink","white"), input_title=input){
   if(player){
-    dataSub <- data %>% filter(str_detect(name,input))
+    dataSub <- data %>% filter(season == season) %>% filter(str_detect(name,input))
   }else if(!opp){
-    dataSub <- data %>% filter(str_detect(team,input))
+    dataSub <- data %>% filter(season == season) %>% filter(str_detect(team,input))
   }else{
-    dataSub <- data %>% filter(str_detect(opp,input))
+    dataSub <- data %>% filter(season == season) %>% filter(str_detect(opp,input))
   }
   
   
