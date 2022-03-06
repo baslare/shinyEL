@@ -4,6 +4,7 @@ require(shinythemes)
 require(tidyverse)
 require(ggsci)
 require(hexbin)
+require(Cairo);options(shiny.usecairo=TRUE)
 
 data <- readRDS('data/data_new.rds')
 features <- readRDS('data/features.rds')
