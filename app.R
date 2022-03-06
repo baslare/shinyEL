@@ -8,22 +8,23 @@ source("hexFunctions.R")
 source("global.R")
 
 
-
-listNames <- as.list(unique(data$name))
-listTeams <- as.list(unique(data$team))
+listSeasons<- as.list(unique(data$season))
+#listNames <- as.list(unique(data$name))
+#listTeams <- as.list(unique(data$team))
 sciCols <- c("red", "pink", "purple", "deep-purple",
              "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green",
              "lime", "yellow", "amber", "orange", "deep-orange", "brown", "grey",
              "blue-grey")
 
 
-ui <- fluidPage(theme = shinytheme("cyborg"),div(style="text-align:center", h1("Euroleague Shot Charts")),
+ui <- fluidPage(theme=shinytheme(theme = "cyborg"),div(style="text-align:center", h1("Euroleague Shot Charts")),
                 useShinyjs(),
                 sidebarLayout(sidebarPanel(radioButtons(inputId= "hex", choices = c("hexmap","heatmap"),label="Plot Type"),
                 div(id="sidebar2",radioButtons(inputId = "player",choices = c("team","player"),label = "Teams/Players"),
                 uiOutput(outputId = "out"),
-                shinyjs::hidden(selectInput(inputId = "selection",choices = listNames,label = "Players")),
-                shinyjs::hidden(selectInput(inputId = "selectTeams",choices = listTeams,label = "Teams")),
+                shinyjs::hidden(selectizeInput(inputId = "selectionSeason",choices = listSeasons,label = "Season")),
+                shinyjs::hidden(selectizeInput(inputId = "selection",choices = c(""),label = "Players")),
+                shinyjs::hidden(selectInput(inputId = "selectTeams",choices = c(""),label = "Teams")),
                 shinyjs::hidden(selectizeInput(inputId = "selectOpp",choices = list(self=FALSE,opponent=TRUE),label = "Self/Opponent FGs")),
                 shinyjs::hidden(selectizeInput(inputId = "colors",choices = list("red","green","blue","purple"),selected="purple",label = "Heatmap Colors")),
                 shinyjs::hidden(selectInput(inputId = "colorsHex",choices = sciCols,selected="pink",label = "Hexmap Colors")),
@@ -38,11 +39,20 @@ ui <- fluidPage(theme = shinytheme("cyborg"),div(style="text-align:center", h1("
 server <- function(input, output){
   
   
+  observeEvent(eventExpr = input$selectionSeason, handlerExpr = {
+    updateSelectInput(inputId = "selectTeams",choices = unique(data[data$season == input$selectionSeason,]$team))
+    updateSelectizeInput(inputId = "selection",choices = unique(data[data$season == input$selectionSeason,]$name))
+    
+  
+    
+  })
+  
   
   
   observeEvent(eventExpr = input$hex,handlerExpr= {
     if(input$hex == "hexmap"){
       #shinyjs::hide(id="sidebar2")
+      
       shinyjs::show(id="colorsHex")
       shinyjs::hide(id="colors")
       shinyjs::show(id="hexSize")
@@ -62,14 +72,19 @@ server <- function(input, output){
   
   observeEvent(eventExpr = input$player,handlerExpr = {
     if(input$player == "team"){
+      
       shinyjs::show(id = "selectTeams")
       shinyjs::hide(id = "selection")
       shinyjs::show(id = "selectOpp")
     }else{
+      
       shinyjs::show(id="selection")
       shinyjs::hide(id="selectTeams")
       shinyjs::hide(id = "selectOpp")
+      
+     
     }
+    shinyjs::show(id="selectionSeason")
   })
   
   
@@ -112,6 +127,7 @@ server <- function(input, output){
       inpName <- isolate(input$selectTeams)
     }
     
+  season <- isolate(input$selectionSeason)
   scicol <- isolate(input$colorsHex)
   hexSize <- isolate(input$hexSize)*100
   hexMult <- isolate(input$hexMult)
@@ -119,9 +135,9 @@ server <- function(input, output){
 
   input$button1
   if(isolate(input$hex) == "heatmap"){
-    isolate(heatFunction(data,player = plCheck,opp = oppCheck,input = inpName,input_title = inpName,col_palette = listColors[[input$colors]]))  
+    isolate(heatFunction(data,player = plCheck,opp = oppCheck,season = season,input = inpName,input_title = inpName,col_palette = listColors[[input$colors]]))  
   }else{
-    isolate(hexFunction(data,binwidth = hexSize ,radiusFactor = hexMult,player = plCheck,opp = oppCheck,input = inpName,col_palette = scicol)) 
+    isolate(hexFunction(data,binwidth = hexSize ,radiusFactor = hexMult,season = season,player = plCheck,opp = oppCheck,input = inpName,col_palette = scicol)) 
   }
    
     

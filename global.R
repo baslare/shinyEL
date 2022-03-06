@@ -5,5 +5,5 @@ require(tidyverse)
 require(ggsci)
 require(hexbin)
 
-data <- readRDS('data/data.rds')
+data <- readRDS('data/data_new.rds')
 features <- readRDS('data/features.rds')

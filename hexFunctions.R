@@ -1,10 +1,10 @@
-hexFunction <- function(df,binwidth,radiusFactor,player=TRUE, opp=FALSE, input, col_palette="amber"){
+hexFunction <- function(df,binwidth,season="2021",radiusFactor,player=TRUE, opp=FALSE, input, col_palette="amber"){
   if(player){
-    dataSub <- data %>% filter(str_detect(name,input))
+    dataSub <- data %>% filter(season == season)%>% filter(str_detect(name,input))
   }else if(!opp){
-    dataSub <- data %>% filter(str_detect(team,input))
+    dataSub <- data %>% filter(season == season)%>% filter(str_detect(team,input))
   }else{
-    dataSub <- data %>% filter(str_detect(opp,input))
+    dataSub <- data %>% filter(season == season)%>% filter(str_detect(opp,input))
   }
   
   xbnds = hex_bounds(dataSub$xnew, binwidth)
@@ -70,8 +70,8 @@ hexFunction <- function(df,binwidth,radiusFactor,player=TRUE, opp=FALSE, input, 
   
   ggplot(hex_data)+ 
     geom_path(data=features,aes(x,y,group=type),color="white",size=1) + 
-    geom_polygon(aes(x=adj_x,
-        y=adj_y,
+    geom_polygon(aes(x=adj_y,
+        y=adj_x,
         group=hex_id,fill=fgPct),
         color="transparent",
         size=1,
@@ -101,18 +101,18 @@ hexFunction <- function(df,binwidth,radiusFactor,player=TRUE, opp=FALSE, input, 
   
 }
 
-heatFunction <- function(df, player=TRUE, input, opp=FALSE, col_palette=c("black","#522149","purple","pink","white"), input_title=input){
+heatFunction <- function(df, player=TRUE, season="2020", input, opp=FALSE, col_palette=c("black","#522149","purple","pink","white"), input_title=input){
   if(player){
-    dataSub <- data %>% filter(str_detect(name,input))
+    dataSub <- data %>% filter(season == season) %>% filter(str_detect(name,input))
   }else if(!opp){
-    dataSub <- data %>% filter(str_detect(team,input))
+    dataSub <- data %>% filter(season == season) %>% filter(str_detect(team,input))
   }else{
-    dataSub <- data %>% filter(str_detect(opp,input))
+    dataSub <- data %>% filter(season == season) %>% filter(str_detect(opp,input))
   }
   
   
   ggplot(dataSub)  + 
-    stat_density_2d(aes(xnew,ynew,fill=stat(density/max(density))),n=200,geom="raster",interpolate=T, contour = F) + 
+    stat_density_2d(aes(ynew,xnew,fill=stat(density/max(density))),n=200,geom="raster",interpolate=T, contour = F) + 
     scale_fill_gradientn(name="Shot Density",colors = col_palette,breaks=c(0.25,0.75),labels=c("low","high")) + 
     geom_path(data=features,(aes(x,y,group=type)),color="white",size=1)  + 
     theme(legend.key.height = unit(10,"points"),
