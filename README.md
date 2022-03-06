@@ -9,6 +9,4 @@ Go to https://baslare.net/elChart.html to give it a try! I personally really lik
 
 ![grafik](https://user-images.githubusercontent.com/74147629/153782537-1e008b8d-caa0-4ad4-8cdc-9edd4cb72f5a.png?raw=true)
 ![grafik](https://user-images.githubusercontent.com/74147629/153782575-60ee3194-4026-4ccf-aee1-ba5989ef7b4c.png?raw=true)
-
-
-
+![rm](https://user-images.githubusercontent.com/74147629/156943462-3c5caf2a-1926-4c2b-a257-5bd5e4f27ab6.png?raw=true)
