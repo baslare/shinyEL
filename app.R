@@ -9,22 +9,22 @@ source("global.R")
 
 
 listSeasons<- as.list(unique(data$season))
-listNames <- as.list(unique(data$name))
-listTeams <- as.list(unique(data$team))
+#listNames <- as.list(unique(data$name))
+#listTeams <- as.list(unique(data$team))
 sciCols <- c("red", "pink", "purple", "deep-purple",
              "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green",
              "lime", "yellow", "amber", "orange", "deep-orange", "brown", "grey",
              "blue-grey")
 
 
-ui <- fluidPage(div(style="text-align:center", h1("Euroleague Shot Charts")),
+ui <- fluidPage(theme=shinytheme(theme = "cyborg"),div(style="text-align:center", h1("Euroleague Shot Charts")),
                 useShinyjs(),
                 sidebarLayout(sidebarPanel(radioButtons(inputId= "hex", choices = c("hexmap","heatmap"),label="Plot Type"),
                 div(id="sidebar2",radioButtons(inputId = "player",choices = c("team","player"),label = "Teams/Players"),
                 uiOutput(outputId = "out"),
-                shinyjs::hidden(selectInput(inputId = "selectionSeason",choices = listSeasons,label = "Season")),
-                shinyjs::hidden(selectInput(inputId = "selection",choices = listNames,label = "Players")),
-                shinyjs::hidden(selectInput(inputId = "selectTeams",choices = listTeams,label = "Teams")),
+                shinyjs::hidden(selectizeInput(inputId = "selectionSeason",choices = listSeasons,label = "Season")),
+                shinyjs::hidden(selectizeInput(inputId = "selection",choices = c(""),label = "Players")),
+                shinyjs::hidden(selectInput(inputId = "selectTeams",choices = c(""),label = "Teams")),
                 shinyjs::hidden(selectizeInput(inputId = "selectOpp",choices = list(self=FALSE,opponent=TRUE),label = "Self/Opponent FGs")),
                 shinyjs::hidden(selectizeInput(inputId = "colors",choices = list("red","green","blue","purple"),selected="purple",label = "Heatmap Colors")),
                 shinyjs::hidden(selectInput(inputId = "colorsHex",choices = sciCols,selected="pink",label = "Hexmap Colors")),
@@ -38,6 +38,14 @@ ui <- fluidPage(div(style="text-align:center", h1("Euroleague Shot Charts")),
 
 server <- function(input, output){
   
+  
+  observeEvent(eventExpr = input$selectionSeason, handlerExpr = {
+    updateSelectInput(inputId = "selectTeams",choices = unique(data[data$season == input$selectionSeason,]$team))
+    updateSelectizeInput(inputId = "selection",choices = unique(data[data$season == input$selectionSeason,]$name))
+    
+  
+    
+  })
   
   
   
@@ -73,8 +81,9 @@ server <- function(input, output){
       shinyjs::show(id="selection")
       shinyjs::hide(id="selectTeams")
       shinyjs::hide(id = "selectOpp")
+      
+     
     }
-    
     shinyjs::show(id="selectionSeason")
   })
   

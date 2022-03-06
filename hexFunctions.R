@@ -70,8 +70,8 @@ hexFunction <- function(df,binwidth,season="2021",radiusFactor,player=TRUE, opp=
   
   ggplot(hex_data)+ 
     geom_path(data=features,aes(x,y,group=type),color="white",size=1) + 
-    geom_polygon(aes(x=adj_x,
-        y=adj_y,
+    geom_polygon(aes(x=adj_y,
+        y=adj_x,
         group=hex_id,fill=fgPct),
         color="transparent",
         size=1,
@@ -112,7 +112,7 @@ heatFunction <- function(df, player=TRUE, season="2020", input, opp=FALSE, col_p
   
   
   ggplot(dataSub)  + 
-    stat_density_2d(aes(xnew,ynew,fill=stat(density/max(density))),n=200,geom="raster",interpolate=T, contour = F) + 
+    stat_density_2d(aes(ynew,xnew,fill=stat(density/max(density))),n=200,geom="raster",interpolate=T, contour = F) + 
     scale_fill_gradientn(name="Shot Density",colors = col_palette,breaks=c(0.25,0.75),labels=c("low","high")) + 
     geom_path(data=features,(aes(x,y,group=type)),color="white",size=1)  + 
     theme(legend.key.height = unit(10,"points"),
