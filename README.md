@@ -1,7 +1,7 @@
 # Shiny App for generating Euroleague Shot Charts - Hex and Heat Maps
 
 
-### UPDATE: March 6th, 2022 - all the season 2014 through 2022 are now available!
+### UPDATE: March 6th, 2022 - all the seasons 2014 through 2022 are now available!
 
 Hi! this is the repo with the scripts for the Shiny app I built for creating shot charts and heat maps similar to those below. I have also supplied demo data that you can use for, well, doing practically the same thing!
 
